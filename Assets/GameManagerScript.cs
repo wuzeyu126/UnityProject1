@@ -2,19 +2,27 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class NewBehaviourScript : MonoBehaviour
+public class GameManager : MonoBehaviour
 {
     int[] map;
-    string debugText = "";
-
-    void PrintArray()
+    bool MoveNumber(int number,int moveFrom,int moveTo)
     {
-        string debugText = "";
-        for (int i = 0; i < map.Length; i++)
+        if(moveTo < 0 || moveTo >= map.Length)
         {
-            debugText += map[i].ToString() + ",";
+            return false;
         }
-        Debug.Log(debugText);
+        if (map[moveTo] == 2)
+        {
+            int velocity = moveTo - moveFrom;
+            bool success = MoveNumber(2, moveTo, moveTo + velocity);
+            if (!success)
+            { 
+                return false;
+            }
+        }
+        map[moveTo] = number;
+        map[moveFrom] = 0;
+        return true;
     }
 
     int GetPlayerIndex()
@@ -29,35 +37,26 @@ public class NewBehaviourScript : MonoBehaviour
         return -1;
     }
 
-    bool MoveNumber(int number, int moveFrom, int moveTo)
+    void PrintArray()
     {
-        if (moveTo < 0 || moveTo >= map.Length)
+        string debugText = "";
+
+        for (int i = 0; i < map.Length; i++)
         {
-            return false;
+            debugText += map[i].ToString() + ", ";
         }
-        if (map[moveTo] == 2)
-        {
-            int velocity = moveTo - moveFrom;
-            bool success = MoveNumber(2, moveTo, moveTo + velocity);
-            if (!success)
-            {
-                return false;
-            }
-        }
-        map[moveTo] = number; ;
-        map[moveFrom] = 0;
-        return true;
+
+        Debug.Log(debugText);
     }
 
-    // Start is called before the first frame update
     void Start()
     {
-        map = new int[] { 0, 0, 0, 1, 0, 2, 0, 0, 0 };
+        map = new int[] {0,0,0,1,0,2,0,0,0 };
 
         PrintArray();
+
     }
 
-    // Update is called once per frame
     void Update()
     {
         if (Input.GetKeyDown(KeyCode.RightArrow))
@@ -66,6 +65,6 @@ public class NewBehaviourScript : MonoBehaviour
             MoveNumber(1, playerIndex, playerIndex + 1);
             PrintArray();
         }
-    }
 
+    }
 }
